@@ -1,0 +1,37 @@
+name: Build Tweak
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Theos
+        run: |
+          export THEOS=/tmp/theos
+          git clone --recursive https://github.com/theos/theos.git $THEOS
+          # Download SDK
+          cd $THEOS/sdks
+          curl -L -o iPhoneOS16.5.sdk.tar.gz https://github.com/theos/sdks/archive/refs/tags/iPhoneOS16.5.sdk.tar.gz
+          tar xzf iPhoneOS16.5.sdk.tar.gz
+          mv sdks-iPhoneOS16.5.sdk/iPhoneOS16.5.sdk .
+          # Install ldid
+          brew install ldid
+          echo "THEOS=$THEOS" >> $GITHUB_ENV
+
+      - name: Build
+        run: |
+          export THEOS=/tmp/theos
+          export THEOS_PACKAGE_SCHEME=rootless
+          make package
+
+      - name: Upload deb
+        uses: actions/upload-artifact@v4
+        with:
+          name: WhiteCurtainBg-deb
+          path: packages/*.deb
