@@ -1,0 +1,8 @@
+Package: com.local.whitecurtainbg
+Name: WhiteCurtainBg
+Version: 0.0.1
+Architecture: iphoneos-arm64
+Description: White translucent background for Dynamic Island expanded panel
+Maintainer: local
+Author: local
+Section: Tweaks
